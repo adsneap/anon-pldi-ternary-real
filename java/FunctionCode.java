@@ -137,8 +137,8 @@ public class FunctionCode {
 					int p2 = xs.get(0).approx(q).multiply(BigInteger.TWO).abs().add(
 								xs.get(1).approx(q).multiply(BigInteger.TWO).abs()
 							).bitLength() - 2;
-					System.out.println(p + " , " + p2);
-					return Arrays.asList(p,p);
+					// System.out.println(p + " , " + p2);
+					return Arrays.asList(p2,p2);
 				}
 			);
 	}
