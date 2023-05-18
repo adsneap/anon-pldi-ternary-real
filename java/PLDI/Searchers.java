@@ -156,4 +156,12 @@ public class Searchers {
 		return new TernaryBoehmReal(666);
 	}
 	
+	/*
+	 * This searcher returns the maximum of a Function code in a given interval
+	 * by reducing to minimisation.
+	 */
+	public static TernaryBoehmReal maximise(FunctionCode F, SpecificIntervalCode compact, int epsilon) {
+		return minimise(FunctionCode.compose(F.getArity(), FunctionCode.negate(), Arrays.asList(F)), compact, epsilon);
+	}
 }
+

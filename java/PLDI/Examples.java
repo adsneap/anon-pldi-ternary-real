@@ -94,4 +94,57 @@ public class Examples {
 		return Searchers.minimise(poly1, minusFourToFour, 20);
 	}
 
+	/*
+	 * The following polynomial is x^6 - x^4 + x^3 + x^2
+	 * It has a global minimum ? 
+	 * and a local minumum at ?
+	 */
+    public static FunctionCode poly2 = FunctionCode.unaryPolynomial(Arrays.asList(
+					new Pair<>(new TernaryBoehmReal(1),6),
+					new Pair<>(new TernaryBoehmReal(-1),4),
+					new Pair<>(new TernaryBoehmReal(1),3),
+					new Pair<>(new TernaryBoehmReal(1),2)
+				));
+
+	/*
+	 * Searching for the minimum of this polynomial in [-4,4] to prec-level 20
+	 * should find the global minimum at -1.
+	 */
+	public static TernaryBoehmReal minimise_ex4() {
+		return Searchers.minimise(poly2, minusFourToFour, 20);
+	}
+
+	public static SpecificIntervalCode minushalftohalf = new SpecificIntervalCode(new VariableIntervalCode(BigInteger.valueOf(-1), BigInteger.valueOf(1), 1));
+
+
+	public static TernaryBoehmReal minimise_ex5() {
+		return Searchers.minimise(poly2, minushalftohalf, 20);
+	}
+
+	public static SpecificIntervalCode minusonetozero = new SpecificIntervalCode(BigInteger.valueOf(-2), 1);
+
+	public static TernaryBoehmReal maximise_ex1() {
+		return Searchers.maximise(poly2, minusonetozero, 20);
+	}
+
+    /*
+	 * The following polynomial is x^6 + x^5 - x^4 + x^2, which has a local 
+	 * maximum at -0.65160. A global minimum at -1.1959, and a local minimum at 
+	 * 0. 
+	 */
+	public static FunctionCode poly3 = FunctionCode.unaryPolynomial(Arrays.asList(
+		new Pair<>(new TernaryBoehmReal(1),6),
+		new Pair<>(new TernaryBoehmReal(1),5),
+		new Pair<>(new TernaryBoehmReal(-1),4),
+		new Pair<>(new TernaryBoehmReal(1),2)
+	    ));
+
+	public static TernaryBoehmReal minimise_ex6() {
+		return Searchers.minimise(poly3, minusFourToFour, 20);
+	}
+
+	// public static TernaryBoehmReal minimise_ex7() {
+		
+	// }
+
 }

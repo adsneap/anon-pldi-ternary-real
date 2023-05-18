@@ -209,6 +209,14 @@ public class FunctionCode {
 		}
 	}
 	
+	public static FunctionCode multiply(int arity, List<FunctionCode> xs) {
+		if (xs.size() == 1) {
+			return xs.get(0);
+		} else {
+			return compose(1, FunctionCode.multiply(), Arrays.asList(multiply(arity , xs.subList(0, xs.size()/2)), multiply(arity, xs.subList(xs.size()/2, xs.size()))));
+		}	
+	}
+
 	// f([x0,...,xarity-1]) = a * xi ^ n
 	public static FunctionCode polyTerm(int arity, TernaryBoehmReal a, int i, int n) {
 		return compose(arity, constantMul(a), Arrays.asList(compose(arity, pow(n), Arrays.asList(proj(arity,i)))));
@@ -242,7 +250,7 @@ public class FunctionCode {
 	public TernaryBoehmReal F_star(List<TernaryBoehmReal> args) {
 		return new TernaryBoehmReal(join(F_prime(args.stream().map(arg -> arg.toVariableFunction()).toList(),
 						((n) -> {
-							System.out.println(continuityOracle.apply(args, n));
+//							System.out.println(continuityOracle.apply(args, n));
 							return continuityOracle.apply(args, n);
 						}))));
 	}
@@ -254,7 +262,5 @@ public class FunctionCode {
 							return getUniformContinuityOracle(ki).apply(n);
 						}))));
 	}
-	
-	
-	
+
 }
