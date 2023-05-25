@@ -263,4 +263,8 @@ public class FunctionCode {
 						}))));
 	}
 
+	public VariableIntervalCode apply(VariableIntervalCode vi) {
+		return approximator.apply(Arrays.asList(vi));
+	}
+
 }

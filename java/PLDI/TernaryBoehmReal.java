@@ -129,8 +129,6 @@ public class TernaryBoehmReal {
 		return multiply(y.inverse());
 	}
 	
-	
-	
 	// Printers
 	
 	public String toString(int n) {
@@ -148,7 +146,5 @@ public class TernaryBoehmReal {
 		}
 		return str;
 	}
-
-	
 	
 }

@@ -127,5 +127,17 @@ public class VariableIntervalCode {
 		return !(right.compareTo(yleft) < 0 || yright.compareTo(left) < 0);
 	}
 
-	
+	 /*
+     * A variable interval code is eclipsed by another variable interval code if
+     * the right endpoint of the first is less than the left endpoint of the
+     * second.
+     */
+    public static boolean eclipses(VariableIntervalCode fx, VariableIntervalCode fy) {
+		if (fx.getPrec() > fy.getPrec()) {
+			fy = fy.down(fx.getPrec() - fy.getPrec());
+		} else if (fx.getPrec() < fy.getPrec()) {
+			fx = fx.down(fy.getPrec() - fx.getPrec());
+		}
+		return (fx.getRightCode().compareTo(fy.getLeftCode()) < 0);
+	}
 }
