@@ -110,17 +110,11 @@ public class Examples2 {
         optimisation.minimise_verbose();
     }
 
-    void minimise_example_base_all_answers() {
-        System.out.println("Minimise x^2 + 1 on [-1,1]...");
-        Optimisation2 optimisation = new Optimisation2(poly1, minus_one_one , 12);
-        optimisation.minimise_verbose_number_answers();
-    }
-
     /*
      * Same as minimise_example_base, but use lower precision levels to guide
      * the search.
      */
-    void minimise_example_guided() {
+    void minimise_example_guided_1() {
         System.out.println("Minimise x^2 + 1 on [-1,1]...");
         minimisation_heuristic heuristic = new minimisation_heuristic(poly1, minus_one_one, 12);
         heuristic.minimise_verbose();
@@ -129,39 +123,40 @@ public class Examples2 {
     /*
      * Same as minimise_example_guided, but use the random search heuristic.
      */
-    void minimise_example_random() {
+    void minimise_example_random_1() {
         System.out.println("Minimise x^2 + 1 on [-1,1]...");
         minimisation_heuristic_random heuristic = new minimisation_heuristic_random(poly1, minus_one_one,12);
         heuristic.minimise_verbose();
     }
 
-    void minimise_example_random_all_answers() {
-        System.out.println("Minimise x^2 + 1 on [-1,1]...");
-        minimisation_heuristic_random heuristic = new minimisation_heuristic_random(poly1, minus_one_one,12);
-        heuristic.minimise_verbose_number_answers();
-    }
-
-    void minimise_example_base_2() {
+    void minimise_example_guided_2() {
         System.out.println("Minimise x^6 - x^4 + x^3 + x^2 on [-1,1]...");
-        Optimisation2 optimisation = new Optimisation2(poly2, minus_one_one , 5);
-        optimisation.minimise_verbose();
+        minimisation_heuristic heuristic = new minimisation_heuristic(poly2, minus_one_one , 20);
+        heuristic.minimise_verbose();
     }
 
     void minimise_example_random_2() {
         System.out.println("Minimise x^6 - x^4 + x^3 + x^2 on [-1,1]...");
-        minimisation_heuristic_random heuristic = new minimisation_heuristic_random(poly2, minus_four_four , 10);
-        heuristic.minimise_verbose_number_answers();
+        minimisation_heuristic_random heuristic = new minimisation_heuristic_random(poly2, minus_one_one , 20);
+        heuristic.minimise_verbose();
     }
 
-    void minimise_example_base_3() {
+    void minimise_example_guided_3() {
         System.out.println("Minimise x^6 + x^5 - x^4 + x^2 on [-2,2]...");
-        Optimisation2 optimisation = new Optimisation2(poly3, minus_two_two , 5);
-        optimisation.minimise_verbose();
+        minimisation_heuristic heuristic = new minimisation_heuristic(poly3, minus_two_two , 15);
+        heuristic.minimise_verbose();
     }
 
     void minimise_example_random_3() {
         System.out.println("Minimise x^6 + x^5 - x^4 + x^2 on [-2,2]...");
-        minimisation_heuristic_random heuristic = new minimisation_heuristic_random(poly3, minus_two_two , 10);
-        heuristic.minimise_verbose_number_answers();
+        minimisation_heuristic_random heuristic = new minimisation_heuristic_random(poly3, minus_two_two , 15);
+        heuristic.minimise_verbose();
     }
+
+    void minimise_example_differential_3() {
+        System.out.println("Minimise x^6 + x^5 - x^4 + x^2 on [-2,2]...");
+        differential_heuristic heuristic = new differential_heuristic(poly3, minus_two_two , 15);
+        heuristic.minimise_verbose();
+    }
+
 }

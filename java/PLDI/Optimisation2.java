@@ -1,6 +1,6 @@
 package PLDI;
 
-import java.util.Arrays;
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 /*
@@ -23,9 +23,6 @@ public class Optimisation2 {
     int intervalsChecked = 0; // The number of intervals checked
     long timeTaken; // The time taken to do the search
     ArrayList<VariableIntervalCode> answers = new ArrayList<VariableIntervalCode>(); // Intermediate minimum intervals
-
-    // History of intervals checked with their corresponding outputs
-    ArrayList<Pair<SpecificIntervalCode,VariableIntervalCode>> history = new ArrayList<Pair<SpecificIntervalCode,VariableIntervalCode>>();
 
     // The intervals to check with their corresponding outputs
     ArrayList<Pair<SpecificIntervalCode,VariableIntervalCode>> frontier = new ArrayList<Pair<SpecificIntervalCode,VariableIntervalCode>>(); 
@@ -126,6 +123,17 @@ public class Optimisation2 {
         return answers.size();
     }
 
+    public void removeEclipsedFromFrontier(VariableIntervalCode output) {
+        for (int i = 0; i < frontier.size(); i++) {
+            Pair<SpecificIntervalCode,VariableIntervalCode> intervalOutput = frontier.get(i);
+            VariableIntervalCode output2 = intervalOutput.getSnd();
+            if (VariableIntervalCode.eclipses(output, output2)) {
+                frontier.remove(i);
+                i--;
+            }
+        }
+    }
+
     // Methods
     
     ArrayList<Pair<SpecificIntervalCode,VariableIntervalCode>> initialise() {
@@ -148,7 +156,6 @@ public class Optimisation2 {
         Pair<SpecificIntervalCode,VariableIntervalCode> intervalOutput = frontier.remove(0);
         SpecificIntervalCode interval = intervalOutput.getFst();
         VariableIntervalCode output = intervalOutput.getSnd();
-        history.add(new Pair<SpecificIntervalCode,VariableIntervalCode>(interval, output));
         if (SpecificIntervalCode.lessThan(output, this.output)) {
             this.input = interval;
             this.output = output;
@@ -185,7 +192,7 @@ public class Optimisation2 {
         System.out.println("Number of answers: " + getAnswersSize());
     }
 
-        /*
+    /*
      * This function returns true if the given interval is eclipsed by any of
      * the intervals in the frontier.
      */
@@ -262,7 +269,6 @@ class minimisation_heuristic extends Optimisation2 {
         VariableIntervalCode input = initialInterval.getVariableIntervalCode();
         VariableIntervalCode output = function.apply(input);
         frontier.add(new Pair<SpecificIntervalCode,VariableIntervalCode>(initialInterval, output));
-        history.add(new Pair<SpecificIntervalCode,VariableIntervalCode>(initialInterval, output));
         return frontier;
     }
 
@@ -278,7 +284,6 @@ class minimisation_heuristic extends Optimisation2 {
     Boolean check() {
         Pair<SpecificIntervalCode,VariableIntervalCode> intervalOutput = frontier.remove(0);
         SpecificIntervalCode interval = intervalOutput.getFst();
-        VariableIntervalCode output = intervalOutput.getSnd();
         SpecificIntervalCode leftsi = interval.downLeft();
         SpecificIntervalCode rightsi = interval.downRight();
         VariableIntervalCode leftvi = function.apply(leftsi.getVariableIntervalCode());
@@ -287,15 +292,7 @@ class minimisation_heuristic extends Optimisation2 {
         Pair<SpecificIntervalCode,VariableIntervalCode> left = new Pair<SpecificIntervalCode,VariableIntervalCode>(leftsi, leftvi);
         Pair<SpecificIntervalCode,VariableIntervalCode> right = new Pair<SpecificIntervalCode,VariableIntervalCode>(rightsi, rightvi);
 
-        int tmp = frontier.size();
-        frontier.removeIf(y -> VariableIntervalCode.eclipses(leftvi,y.getSnd()) || VariableIntervalCode.eclipses(rightvi,y.getSnd()));
-        System.out.println("Frontier size: " + frontier.size());
-        answers.removeIf(y -> VariableIntervalCode.eclipses(leftvi,y) || VariableIntervalCode.eclipses(rightvi,y));
-        if (tmp != frontier.size()) {
-            System.out.println("Removed " + (tmp - frontier.size()) + " eclipsed intervals");
-        }
-
-        if (!history.contains(left) && !eclipsed(leftvi) && !eclipsed(leftvi , answers)) {
+        if (!eclipsed(leftvi, rightvi) && !eclipsed(leftvi , answers)) {
             if (leftsi.getPrec() >= delta || leftvi.join_prime().getPrec() >= epsilon) {
                 if (this.output == null) {
                     this.input = leftsi;
@@ -306,18 +303,15 @@ class minimisation_heuristic extends Optimisation2 {
                         this.input = leftsi;
                         this.output = leftvi;
                         answers.add(leftvi);
-                    } else {
-                        frontier.add(left);
-                    }
+                    } 
                 }
             } else {
                 frontier.add(left);
+                removeEclipsedFromFrontier(leftvi);
             }
         }
-
-        history.add(left);
             
-        if (!history.contains(right) && !eclipsed(rightvi) && !eclipsed(rightvi , answers)) {
+        if (!eclipsed(rightvi, leftvi) && !eclipsed(rightvi , answers)) {
             if (rightsi.getPrec() >= delta || rightvi.join_prime().getPrec() >= epsilon) {
                 if (this.output == null) {
                     this.input = rightsi;
@@ -328,55 +322,15 @@ class minimisation_heuristic extends Optimisation2 {
                         this.input = rightsi;
                         this.output = rightvi;
                         answers.add(rightvi);
-                    } else {
-                        frontier.add(right);
-                    }
+                    } 
                 }
             } else {
                 frontier.add(right);
+                removeEclipsedFromFrontier(rightvi);
             }
         }
 
-        history.add(right);
-
         return false;
-
-        // if (interval.getPrec() < delta) {
-        //     if (!eclipsed(leftvi, rightvi) && !eclipsed(leftvi , answers) && !history.contains(left) ) {
-        //         if (SpecificIntervalCode.lessThan(leftvi, output)) {
-        //             answers.add(leftvi);
-        //         } else {
-        //             frontier.add(left);
-        //         }  
-                
-        //     }
-        //     if (!eclipsed(rightvi, leftvi) && !eclipsed(rightvi , answers) && !history.contains(right)) {
-        //         if (SpecificIntervalCode.lessThan(rightvi, output)) {
-        //             answers.add(rightvi);
-        //         } else {
-        //             frontier.add(right);
-        //         }
-        //     }
-
-        // } 
-
-        // history.add(left);
-        // history.add(right);
-
-        // if (output.getPrec() >= epsilon || interval.getPrec() >= delta) {
-        //     if (this.output == null) {
-        //         this.input = interval;
-        //         this.output = output;
-        //         answers.add(output);
-        //         return true;
-        //     } else if(SpecificIntervalCode.lessThan(output, this.output)) {
-        //         this.input = interval;
-        //         this.output = output;
-        //         answers.add(output);
-        //         return true;
-        //     }
-           
-        // }
         
     }
 
@@ -419,4 +373,59 @@ class minimisation_heuristic_random extends minimisation_heuristic {
         timeTaken = System.nanoTime() - startTime;
         
     }
+
+}
+
+/*
+* This class is a modification of the minimisation_heuristic class, which
+* ranks the intervals in the frontier by the size of their output intervals,
+* and then checks the interval with the largest output interval.
+* 
+* Since all intervals in the frontier have the same input interval, the
+* interval with the largest output interval is the one with the largest
+* "derivative". After processing a few layers of precision, we would expect
+* this heuristic to remove a large proportion of the frontier, and thus
+* reduce the number of intervals that need to be checked.
+*/ 
+class differential_heuristic extends minimisation_heuristic {
+    public differential_heuristic(FunctionCode function, VariableIntervalCode compactInterval, int epsilon) {
+        super(function, compactInterval, epsilon);
+    }
+
+    boolean isWider(VariableIntervalCode fx, VariableIntervalCode fy) {
+        if (fx.getPrec() > fy.getPrec()) {
+            fy = fy.down(fx.getPrec() - fy.getPrec());
+        } else if (fx.getPrec() < fy.getPrec()) {
+            fx = fx.down(fy.getPrec() - fx.getPrec());
+        }
+        BigInteger fxWidth = fx.getRightCode().subtract(fx.getLeftCode());
+        BigInteger fyWidth = fy.getRightCode().subtract(fy.getLeftCode());
+        return fxWidth.compareTo(fyWidth) > 0;
+    }
+
+    // don't need to 'sort' as such, just move the interval with the largest output to the front
+    void sort() {
+        int index = 0;
+        VariableIntervalCode largest = frontier.get(0).getSnd();
+        for (int i = 1; i < frontier.size(); i++) {
+            if (isWider(frontier.get(i).getSnd(), largest)) {
+                index = i;
+                largest = frontier.get(i).getSnd();
+            }
+        }
+        Pair<SpecificIntervalCode,VariableIntervalCode> intervalOutput = frontier.remove(index);
+        frontier.add(0, intervalOutput);
+    }
+
+    void minimise() {
+        long startTime = System.nanoTime();     
+        initialise();
+        while (frontier.size() > 0) {
+            intervalsChecked++;
+            sort();
+            check();
+        }
+        timeTaken = System.nanoTime() - startTime;
+    }
+
 }

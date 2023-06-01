@@ -94,7 +94,7 @@ public class Searchers {
 
 	public static TernaryBoehmReal minimise(FunctionCode F, SpecificIntervalCode compact, int epsilon) {
 		int delta = F.getUniformContinuityOracle(compact).apply(epsilon).get(0);
-		System.out.println(delta);
+		System.out.println("Delta = " + delta);
 		VariableIntervalCode fcompact = F.apply(Arrays.asList(compact.getVariableIntervalCode()));
 		if (compact.getPrec() >= delta || fcompact.join_prime().getPrec() >= epsilon) {
 			return new TernaryBoehmReal(compact);
@@ -150,8 +150,8 @@ public class Searchers {
 			}
 		}
 		if (answers.size() > 0) {
-			System.out.println(checks);
 			return new TernaryBoehmReal(answers.get(0).getFst());
+
 		}
 		return new TernaryBoehmReal(666);
 	}

@@ -138,6 +138,6 @@ public class VariableIntervalCode {
 		} else if (fx.getPrec() < fy.getPrec()) {
 			fx = fx.down(fy.getPrec() - fx.getPrec());
 		}
-		return (fx.getRightCode().compareTo(fy.getLeftCode()) < 0);
+		return (fx.getRightCode().compareTo(fy.getLeftCode()) <= 0);
 	}
 }

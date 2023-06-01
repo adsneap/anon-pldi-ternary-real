@@ -140,11 +140,9 @@ public class Examples {
 	    ));
 
 	public static TernaryBoehmReal minimise_ex6() {
-		return Searchers.minimise(poly3, minusFourToFour, 20);
+		TernaryBoehmReal result = Searchers.minimise(poly3, minusFourToFour, 30);
+		System.out.println("minimise_ex6: " + result.toDouble(15));
+		return result;
 	}
-
-	// public static TernaryBoehmReal minimise_ex7() {
-		
-	// }
 
 }
